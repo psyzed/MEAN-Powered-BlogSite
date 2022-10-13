@@ -11,9 +11,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CreatePostsComponent } from './posts/create-posts/create-posts.component';
 import { HeaderComponent } from './header/header.component';
+import { PostsListComponent } from './posts/posts-list/posts-list.component';
 
 @NgModule({
-  declarations: [AppComponent, CreatePostsComponent, HeaderComponent],
+  declarations: [AppComponent, CreatePostsComponent, HeaderComponent, PostsListComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
