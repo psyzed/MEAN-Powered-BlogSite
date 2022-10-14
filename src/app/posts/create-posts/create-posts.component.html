@@ -1,11 +1,19 @@
 <mat-card>
   <mat-form-field>
+    <input
+      matInput
+      type="text"
+      placeholder="Enter Post Title!"
+      [(ngModel)]="enteredTitle"
+    />
+  </mat-form-field>
+  <mat-form-field>
     <textarea
       matInput
       rows="6"
       style="resize: none"
-      [placeholder]="newPost"
-      [(ngModel)]="enteredValue"
+      placeholder="Enter Your Post!"
+      [(ngModel)]="enteredContent"
     ></textarea>
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="onAddPost()">
