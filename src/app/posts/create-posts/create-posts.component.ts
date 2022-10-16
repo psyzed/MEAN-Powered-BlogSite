@@ -1,4 +1,3 @@
-import { formatCurrency } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 

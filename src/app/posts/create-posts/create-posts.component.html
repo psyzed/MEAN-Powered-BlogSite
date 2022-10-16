@@ -8,10 +8,10 @@
         ngModel
         name="title"
         required
+        minlength="3"
+        #title="ngModel"
       />
-      <mat-error *ngIf="postForm.invalid"
-        >Please Enter A Valid Title!</mat-error
-      >
+      <mat-error *ngIf="title.invalid">Please Enter A Valid Title!</mat-error>
     </mat-form-field>
     <mat-form-field>
       <textarea
@@ -22,7 +22,9 @@
         ngModel
         name="content"
         required
+        #content="ngModel"
       ></textarea>
+      <mat-error *ngIf="content.invalid">Please Enter A Valid Title!</mat-error>
     </mat-form-field>
     <button mat-raised-button color="primary" type="submit">Save Post</button>
   </form>
