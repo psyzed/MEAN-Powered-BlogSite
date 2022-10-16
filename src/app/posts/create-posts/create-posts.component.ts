@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { Post } from '../post.model';
@@ -12,7 +12,6 @@ import { PostService } from '../posts.service';
 export class CreatePostsComponent implements OnInit {
   enteredTitle: string = '';
   enteredContent: string = '';
-  @Output() postCreated = new EventEmitter<Post>();
 
   constructor(private postService: PostService) {}
 
