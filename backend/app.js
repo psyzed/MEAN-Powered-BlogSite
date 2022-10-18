@@ -7,7 +7,7 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://psyzed:dcsa-10c@meanpowerdblogsite.ou1ixex.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://psyzed:dcsa-10c@meanpowerdblogsite.ou1ixex.mongodb.net/MeanPoweredBlogSite?retryWrites=true&w=majority"
   )
   .then(() => {
     console.log("Connected to DB");
@@ -23,11 +23,11 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
   );
   next();
 });
@@ -38,28 +38,29 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content,
   });
-  console.log(post);
-  res.status(201).json({
-    message: "Post Added Successfully",
+  post.save().then((createdPost) => {
+    console.log(post);
+    res.status(201).json({
+      message: "Post Added Successfully",
+      postId: createdPost._id,
+    });
   });
 });
 
 app.get("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: "refvcecec",
-      title: "First server-side post!",
-      content: "my first RESTfull api",
-    },
-    {
-      id: "htyhrthrt",
-      title: "Second server-side post!",
-      content: "my first RESTfull api!",
-    },
-  ];
-  res.status(200).json({
-    message: "Post Fetched succesfully!",
-    posts: posts,
+  Post.find().then((documents) => {
+    console.log(documents);
+    res.status(200).json({
+      message: "Post Fetched succesfully!",
+      posts: documents,
+    });
+  });
+});
+
+app.delete("/api/posts/:id", (req, res, next) => {
+  Post.deleteOne({ _id: req.params.id }).then((result) => {
+    console.log(result);
+    res.status(200).json({ message: "Post Deleted!" });
   });
 });
 
