@@ -27,6 +27,7 @@ import { PostsListComponent } from './posts/posts-list/posts-list.component';
     AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     MatInputModule,
     MatCardModule,
     MatButtonModule,
