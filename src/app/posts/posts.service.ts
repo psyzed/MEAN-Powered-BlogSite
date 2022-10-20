@@ -52,7 +52,8 @@ export class PostService {
     }>('http://localhost:3000/api/posts/' + id);
   }
 
-  addPost(post: Post) {
+  addPost(title: string, content: string) {
+    const post: Post = { id: null, title: title, content: content };
     this.http
       .post<{ message: string; postId: string }>(
         'http://localhost:3000/api/posts',
@@ -67,20 +68,16 @@ export class PostService {
       });
   }
 
-  updatePost(post: Post) {
-    const updatedPost: Post = {
-      id: post.id,
-      title: post.title,
-      content: post.content,
-    };
+  updatePost(id: string, title: string, content: string) {
+    const post: Post = { id: id, title: title, content: content };
     this.http
-      .put('http://localhost:3000/api/posts/' + updatedPost.id, updatedPost)
+      .put('http://localhost:3000/api/posts/' + id, post)
       .subscribe((responseData) => {
         const updatedPosts = [...this.posts];
         const oldPostIndex = updatedPosts.findIndex(
-          (post) => post.id === updatedPost.id
+          (post) => post.id === post.id
         );
-        updatedPosts[oldPostIndex] = updatedPost;
+        updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
