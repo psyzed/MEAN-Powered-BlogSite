@@ -1,41 +1,88 @@
 const express = require("express");
+const multer = require("multer");
 
 const Post = require("../models/post");
 
 const router = express.Router();
 
-router.post("", (req, res, next) => {
-  // console.log(req.body);
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
-  post.save().then((createdPost) => {
-    // console.log(post);
-    res.status(201).json({
-      message: "Post Added Successfully",
-      postId: createdPost._id,
-    });
-  });
+const MIME_TYPE_MAP = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+};
+
+const storageConfig = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error("Invalid Mime Type!");
+    if (isValid) {
+      error = null;
+    }
+    cb(error, "backend/images");
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(" ").join("-");
+    const extension = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + "-" + Date.now() + "." + extension);
+  },
 });
 
-router.put("/:id", (req, res, next) => {
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-  Post.updateOne({ _id: req.params.id }, post).then((result) => {
-    // console.log(result);
-    res.status(200).json({ message: "Update Successful!" });
-  });
-});
+router.post(
+  "",
+  multer({ storage: storageConfig }).single("image"),
+  (req, res, next) => {
+    // console.log(req.body);
+    const serverUrl = req.protocol + "://" + req.get("host");
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: serverUrl + "/images/" + req.file.filename,
+    });
+    post.save().then((createdPost) => {
+      // console.log(post);
+      res.status(201).json({
+        message: "Post Added Successfully",
+        post: {
+          // ...createdPost,
+          // id: createdPost._id
+          id: createdPost._id,
+          title: createdPost.title,
+          content: createdPost.content,
+          imagePath: createdPost.imagePath,
+        },
+      });
+    });
+  }
+);
+
+router.put(
+  "/:id",
+  multer({ storage: storageConfig }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const serverUrl = req.protocol + "://" + req.get("host");
+      imagePath = serverUrl + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+    });
+    console.log(post);
+    Post.updateOne({ _id: req.params.id }, post).then((result) => {
+      // console.log(result);
+      res.status(200).json({ message: "Update Successful!" });
+    });
+  }
+);
 
 router.get("", (req, res, next) => {
   Post.find().then((documents) => {
-    console.log(documents);
+    // console.log(documents);
     res.status(200).json({
-      message: "Post Fetched succesfully!",
+      message: "Posts Fetched succesfully!",
       posts: documents,
     });
   });
