@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,6 +17,8 @@ import { AppComponent } from './app.component';
 import { CreatePostsComponent } from './posts/create-posts/create-posts.component';
 import { HeaderComponent } from './header/header.component';
 import { PostsListComponent } from './posts/posts-list/posts-list.component';
+import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { PostsListComponent } from './posts/posts-list/posts-list.component';
     CreatePostsComponent,
     HeaderComponent,
     PostsListComponent,
+    LoginComponent,
+    SignupComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +43,7 @@ import { PostsListComponent } from './posts/posts-list/posts-list.component';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
