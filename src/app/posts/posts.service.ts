@@ -13,27 +13,37 @@ export class PostService {
   // ];
 
   private posts: Post[] = [];
-  private postsUpdated = new Subject<Post[]>();
+  private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: any }>('http://localhost:3000/api/posts')
+      .get<{ message: string; posts: any; maxPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map((postData) => {
-          return postData.posts.map((post) => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-            };
-          });
+          return {
+            posts: postData.posts.map((post) => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath,
+              };
+            }),
+            maxPosts: postData.maxPosts,
+          };
         })
       )
-      .subscribe((transformedPosts) => {
-        this.posts = transformedPosts;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe((transformedPostsData) => {
+        this.posts = transformedPostsData.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          postCount: transformedPostsData.maxPosts,
+        });
       });
   }
 
@@ -47,55 +57,51 @@ export class PostService {
         _id: string;
         title: string;
         content: string;
+        imagePath: string;
       };
       message: string;
     }>('http://localhost:3000/api/posts/' + id);
   }
 
-  addPost(post: Post) {
+  addPost(title: string, content: string, image: File) {
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
     this.http
-      .post<{ message: string; postId: string }>(
+      .post<{ message: string; post: Post }>(
         'http://localhost:3000/api/posts',
-        post
+        postData
       )
       .subscribe((responseData) => {
-        const postId = responseData.postId;
-        post.id = postId;
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
-  updatePost(post: Post) {
-    const updatedPost: Post = {
-      id: post.id,
-      title: post.title,
-      content: post.content,
-    };
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: Post | FormData;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('id', id);
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      postData = {
+        id: id,
+        title: title,
+        content: content,
+        imagePath: image,
+      };
+    }
     this.http
-      .put('http://localhost:3000/api/posts/' + updatedPost.id, updatedPost)
+      .put('http://localhost:3000/api/posts/' + id, postData)
       .subscribe((responseData) => {
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(
-          (post) => post.id === updatedPost.id
-        );
-        updatedPosts[oldPostIndex] = updatedPost;
-        this.posts = updatedPosts;
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
-    this.http
-      .delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe(() => {
-        const updatedPostsArray = this.posts.filter(
-          (post) => post.id !== postId
-        );
-        this.posts = updatedPostsArray;
-        this.postsUpdated.next([...this.posts]);
-      });
+    return this.http.delete('http://localhost:3000/api/posts/' + postId);
   }
 }
