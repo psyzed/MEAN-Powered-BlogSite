@@ -12,10 +12,10 @@ mongoose
     "mongodb+srv://psyzed:dcsa-10c@meanpowerdblogsite.ou1ixex.mongodb.net/MeanPoweredBlogSite?retryWrites=true&w=majority"
   )
   .then(() => {
-    console.log("Connected to DB");
+    console.log("Connected to DataBase!");
   })
   .catch(() => {
-    console.log("Connection Failed!");
+    console.log("Connection to DataBase Failed!");
   });
 
 app.use(express.json());
