@@ -71,6 +71,7 @@ router.put(
       title: req.body.title,
       content: req.body.content,
       imagePath: imagePath,
+      postCreator: req.userData.userId,
     });
     Post.updateOne(
       { _id: req.params.id, postCreator: req.userData.userId },
