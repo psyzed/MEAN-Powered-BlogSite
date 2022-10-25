@@ -46,7 +46,6 @@ export class PostsListComponent implements OnInit, OnDestroy {
       .subscribe((isAuthenticated) => {
         this.userIsLoggedIn = isAuthenticated;
         this.userId = this.authSevice.getUserId();
-        console.log(this.userId);
       });
   }
 
