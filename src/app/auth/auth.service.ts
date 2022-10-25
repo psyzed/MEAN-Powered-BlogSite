@@ -29,9 +29,7 @@ export class AuthService {
     const authData: AuthData = { email: email, password: password };
     this.http
       .post('http://localhost:3000/api/user/signup', authData)
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+      .subscribe((responseData) => {});
   }
 
   loginUser(email: string, password: string) {
@@ -67,7 +65,6 @@ export class AuthService {
     const currentTime = new Date();
     const expiresIn =
       userAuthInformation.tokenExpirationDate.getTime() - currentTime.getTime();
-    console.log(userAuthInformation, expiresIn);
     if (expiresIn > 0) {
       this.token = userAuthInformation.token;
       this.isAuthenticated = true;
