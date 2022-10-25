@@ -33,7 +33,6 @@ router.post(
   checkAuthMiddleware,
   multer({ storage: storageConfig }).single("image"),
   (req, res, next) => {
-    // console.log(req.body);
     const serverUrl = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
@@ -41,7 +40,6 @@ router.post(
       imagePath: serverUrl + "/images/" + req.file.filename,
     });
     post.save().then((createdPost) => {
-      // console.log(post);
       res.status(201).json({
         message: "Post Added Successfully",
         post: {
@@ -73,9 +71,7 @@ router.put(
       content: req.body.content,
       imagePath: imagePath,
     });
-    console.log(post);
     Post.updateOne({ _id: req.params.id }, post).then((result) => {
-      // console.log(result);
       res.status(200).json({ message: "Update Successful!" });
     });
   }
@@ -91,7 +87,6 @@ router.get("", (req, res, next) => {
   }
   postQuery
     .then((documents) => {
-      // console.log(documents);
       fetchedPosts = documents;
       return Post.count();
     })
@@ -116,7 +111,6 @@ router.get("/:id", (req, res, next) => {
 
 router.delete("/:id", checkAuthMiddleware, (req, res, next) => {
   Post.deleteOne({ _id: req.params.id }).then((result) => {
-    // console.log(result);
     res.status(200).json({ message: "Post Deleted!" });
   });
 });
