@@ -6,7 +6,7 @@
       <img [src]="post.imagePath" [alt]="post.title" />
     </div>
     <p>{{ post.content }}</p>
-    <mat-action-row *ngIf="userIsLoggedIn">
+    <mat-action-row *ngIf="userIsLoggedIn && userId == post.postCreator">
       <a mat-raised-button color="primary" [routerLink]="['/edit', post.id]"
         >EDIT</a
       >

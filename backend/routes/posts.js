@@ -33,27 +33,33 @@ router.post(
   checkAuthMiddleware,
   multer({ storage: storageConfig }).single("image"),
   (req, res, next) => {
-    // console.log(req.body);
     const serverUrl = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
       imagePath: serverUrl + "/images/" + req.file.filename,
+      postCreator: req.userData.userId,
     });
-    post.save().then((createdPost) => {
-      // console.log(post);
-      res.status(201).json({
-        message: "Post Added Successfully",
-        post: {
-          // ...createdPost,
-          // id: createdPost._id
-          id: createdPost._id,
-          title: createdPost.title,
-          content: createdPost.content,
-          imagePath: createdPost.imagePath,
-        },
+    post
+      .save()
+      .then((createdPost) => {
+        res.status(201).json({
+          message: "Post Added Successfully",
+          post: {
+            // ...createdPost,
+            // id: createdPost._id
+            id: createdPost._id,
+            title: createdPost.title,
+            content: createdPost.content,
+            imagePath: createdPost.imagePath,
+          },
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Creating Post Failed!",
+        });
       });
-    });
   }
 );
 
@@ -72,12 +78,22 @@ router.put(
       title: req.body.title,
       content: req.body.content,
       imagePath: imagePath,
+      postCreator: req.userData.userId,
     });
-    console.log(post);
-    Post.updateOne({ _id: req.params.id }, post).then((result) => {
-      // console.log(result);
-      res.status(200).json({ message: "Update Successful!" });
-    });
+    Post.updateOne(
+      { _id: req.params.id, postCreator: req.userData.userId },
+      post
+    )
+      .then((result) => {
+        if (result.modifiedCount > 0) {
+          res.status(200).json({ message: "Update Successful!" });
+        } else {
+          res.status(401).json({ message: "Not Authorized!" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ message: "Updating Post Failed!" });
+      });
   }
 );
 
@@ -91,7 +107,6 @@ router.get("", (req, res, next) => {
   }
   postQuery
     .then((documents) => {
-      // console.log(documents);
       fetchedPosts = documents;
       return Post.count();
     })
@@ -101,24 +116,44 @@ router.get("", (req, res, next) => {
         posts: fetchedPosts,
         maxPosts: count,
       });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Fetching Posts Failed!",
+      });
     });
 });
 
 router.get("/:id", (req, res, next) => {
-  Post.findById(req.params.id).then((post) => {
-    if (post) {
-      res.status(200).json({ post: post, message: "Post Found!" });
-    } else {
-      res.status(404).json({ message: "Post Not Found!" });
-    }
-  });
+  Post.findById(req.params.id)
+    .then((post) => {
+      if (post) {
+        res.status(200).json({ post: post, message: "Post Found!" });
+      } else {
+        res.status(404).json({ message: "Post Not Found!" });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Fetching Post Failed!",
+      });
+    });
 });
 
 router.delete("/:id", checkAuthMiddleware, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id }).then((result) => {
-    // console.log(result);
-    res.status(200).json({ message: "Post Deleted!" });
-  });
+  Post.deleteOne({ _id: req.params.id, postCreator: req.userData.userId })
+    .then((result) => {
+      if (result.deletedCount > 0) {
+        res.status(200).json({ message: "Post Deleted!" });
+      } else {
+        res.status(401).json({ message: "Not Authorized!" });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Deleting Post Failed!",
+      });
+    });
 });
 
 module.exports = router;

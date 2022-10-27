@@ -6,12 +6,6 @@ import { Post } from './post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  // posts: { title: string; content: string }[] = [
-  //   { title: 'First Post', content: 'This is the first post!' },
-  //   { title: 'Second Post', content: 'This is the second post!' },
-  //   { title: 'Third Post', content: 'This is the third post!' },
-  // ];
-
   private posts: Post[] = [];
   private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
 
@@ -32,6 +26,7 @@ export class PostService {
                 content: post.content,
                 id: post._id,
                 imagePath: post.imagePath,
+                postCreator: post.postCreator,
               };
             }),
             maxPosts: postData.maxPosts,
@@ -58,6 +53,7 @@ export class PostService {
         title: string;
         content: string;
         imagePath: string;
+        postCreator: string;
       };
       message: string;
     }>('http://localhost:3000/api/posts/' + id);
@@ -92,6 +88,7 @@ export class PostService {
         title: title,
         content: content,
         imagePath: image,
+        postCreator: null,
       };
     }
     this.http
