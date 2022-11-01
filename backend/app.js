@@ -9,7 +9,8 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://psyzed:dcsa-10c@meanpowerdblogsite.ou1ixex.mongodb.net/MeanPoweredBlogSite?retryWrites=true&w=majority"
+    "mongodb+srv://psyzed:" +
+      process.env.MONGO_ATLAS_PW + "@meanpowerdblogsite.ou1ixex.mongodb.net/MeanPoweredBlogSite?retryWrites=true&w=majority"
   )
   .then(() => {
     console.log("Connected to DataBase!");

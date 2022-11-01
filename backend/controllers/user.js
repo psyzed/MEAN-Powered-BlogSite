@@ -48,7 +48,7 @@ exports.loginUser = (req, res, next) => {
           email: fetchedUser.email,
           userId: fetchedUser._id,
         },
-        "4wheelsmovethebody2wheelsmovethesoul",
+        process.env.JWT_KEY,
         { expiresIn: "1h" }
       );
       res.status(200).json({

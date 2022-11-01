@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MONGO_ATLAS_PW": "dcsa-10c",
+    "JWT_KEY": "4wheelsmovethebody2wheelsmovethesoul"
+  }
+}
