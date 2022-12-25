@@ -8,6 +8,6 @@ Features are still being added, you can sign up and use the app with your chosen
 Instructions
 1. Clone the repo to your local machine.
 2. Install all dependencies.
-3. Serve locally the Angular SPA but running the command ng serve.
-4. Open a second terminal and run 'npm run start:server' to spin up the locally the nodeJS server.
+3. Serve locally the Angular SPA by running the command ng serve.
+4. Open a second terminal and run 'npm run start:server' to spin up locally the nodeJS server.
 5. Thank you for trying out my app.
